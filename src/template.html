@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pachni Αναφορά Παγετού</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: an agronomist's field tool. Map of the frost night on the left, the report for one point on the right, method below. */
+:root {
+  --bg: #f3f6f7;
+  --surface: #ffffff;
+  --ink: #14212b;
+  --muted: #586977;
+  --line: #d6dfe5;
+  --accent: #1c5f99;
+  --accent-soft: #e3eef8;
+  --sev0: #2f7a4b;
+  --sev0-soft: #e2f1e7;
+  --sev1: #a86a0e;
+  --sev1-soft: #f8ecd6;
+  --sev2: #b13428;
+  --sev2-soft: #f8e1de;
+  --land-lo: #e9ece6;
+  --land-hi: #9aa79b;
+  --shade: #2c3a42;
+  --halo: rgba(255,255,255,0.88);
+  --basin: rgba(28,95,153,0.42);
+  --f-display: "Commissioner", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Commissioner", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --f-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1418; --surface: #161f25; --ink: #e4ebf0; --muted: #94a5b2; --line: #2a3640;
+    --accent: #6fa8dc; --accent-soft: #1b2c3b;
+    --sev0: #6cc08a; --sev0-soft: #17291f; --sev1: #e0a845; --sev1-soft: #2d2412; --sev2: #ea7468; --sev2-soft: #331a17;
+    --land-lo: #2a3238; --land-hi: #6b7a72; --shade: #05080a; --halo: rgba(14,20,24,0.85); --basin: rgba(111,168,220,0.42);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1418; --surface: #161f25; --ink: #e4ebf0; --muted: #94a5b2; --line: #2a3640;
+  --accent: #6fa8dc; --accent-soft: #1b2c3b;
+  --sev0: #6cc08a; --sev0-soft: #17291f; --sev1: #e0a845; --sev1-soft: #2d2412; --sev2: #ea7468; --sev2-soft: #331a17;
+  --land-lo: #2a3238; --land-hi: #6b7a72; --shade: #05080a; --halo: rgba(14,20,24,0.85); --basin: rgba(111,168,220,0.42);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 40px;
+}
+.wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+header.top { display: flex; flex-direction: column; gap: 6px; }
+.brandrow { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--f-display); font-weight: 700; font-size: 30px; letter-spacing: -0.01em; }
+.brand small { font-weight: 500; font-size: 16px; color: var(--muted); margin-left: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.lede { margin: 0; color: var(--muted); max-width: 72ch; text-wrap: pretty; }
+.app { display: grid; grid-template-columns: minmax(0, 560px) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 920px) { .app { grid-template-columns: minmax(0, 1fr); } }
+.mapcol { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { font: inherit; font-size: 13px; padding: 6px 11px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+:root[data-theme="dark"] .seg button[aria-pressed="true"] { color: #0e1418; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .seg button[aria-pressed="true"] { color: #0e1418; } }
+.seglabel { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-right: 4px; }
+button:focus-visible, select:focus-visible, canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mapwrap { position: relative; width: 100%; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+canvas#map { display: block; width: 100%; cursor: crosshair; touch-action: manipulation; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 12px; color: var(--muted); }
+.scale { display: flex; flex-direction: column; gap: 2px; min-width: 220px; }
+.scale .bar { height: 10px; border-radius: 3px; }
+.scale .ticks { display: flex; justify-content: space-between; font-family: var(--f-data); font-size: 11px; }
+.key { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.picks { display: flex; flex-wrap: wrap; gap: 6px; }
+.picks button { font: inherit; font-size: 12.5px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.picks button:hover { border-color: var(--accent); }
+aside.report { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.rhead { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+.rhead h2 { margin: 0; font-size: 20px; font-weight: 700; text-wrap: balance; }
+.rhead .where { font-family: var(--f-data); font-size: 12px; color: var(--muted); }
+.prio { padding: 10px 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 2px; }
+.prio b { font-size: 15px; }
+.prio span { font-size: 13px; }
+.p2 { background: var(--sev2-soft); color: var(--sev2); }
+.p1 { background: var(--sev1-soft); color: var(--sev1); }
+.p0 { background: var(--sev0-soft); color: var(--sev0); }
+.prio span { color: var(--ink); }
+h3 { margin: 0 0 6px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+.kv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 14px; align-items: baseline; }
+.kv dt { color: var(--muted); font-size: 13.5px; }
+.kv dd { margin: 0; font-family: var(--f-data); font-variant-numeric: tabular-nums; font-size: 14px; text-align: right; }
+.kv dd small { font-family: var(--f-body); color: var(--muted); font-size: 12px; display: block; }
+.terrain { font-size: 13.5px; }
+.terrain b { font-weight: 600; }
+.row2 { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.row2 label { font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
+select { font: inherit; font-size: 14px; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.sevs { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; font-size: 13.5px; }
+.sev { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.s0 { background: var(--sev0-soft); color: var(--sev0); }
+.s1 { background: var(--sev1-soft); color: var(--sev1); }
+.s2 { background: var(--sev2-soft); color: var(--sev2); }
+.sna { background: var(--bg); color: var(--muted); }
+.note { font-size: 12.5px; color: var(--muted); margin: 0; }
+svg text { font-family: var(--f-data); }
+section.method { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+@media (max-width: 920px) { section.method { grid-template-columns: minmax(0, 1fr); } }
+section.method h2 { font-size: 18px; margin: 0 0 8px; text-wrap: balance; }
+section.method p, section.method li { max-width: 68ch; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 13.5px; width: 100%; }
+th, td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+td.n, th.n { text-align: right; font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; }
+.src { font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+.src a, .method a { color: var(--accent); }
+ul { padding-left: 18px; margin: 6px 0; }
+@media (prefers-reduced-motion: no-preference) { aside.report { transition: opacity .15s ease; } }
+</style>
+</head>
+<body>
+<div class="wrap" lang="el">
+  <header class="top">
+    <div class="brandrow">
+      <div class="brand">Pachni <small>Αναφορά παγετού</small></div>
+      <span class="chip">Πρωτότυπο</span>
+    </div>
+    <p class="lede">Ο παγετός της 19ης και 20ής Μαρτίου 2025 σε Αλμωπία, Πέλλα και Ημαθία, με πραγματικά δεδομένα. Πάτησε οπουδήποτε στον χάρτη για να βγει η Αναφορά παγετού εκείνου του σημείου, όπως θα τη λάμβανε ο γεωπόνος ενός συνεταιρισμού.</p>
+  </header>
+
+  <main class="app">
+    <section class="mapcol" aria-label="Χάρτης">
+      <div class="controls">
+        <div><span class="seglabel">Νύχτα</span>
+          <span class="seg" role="group" aria-label="Νύχτα">
+            <button type="button" id="n19" aria-pressed="false">προς 19/3</button>
+            <button type="button" id="n20" aria-pressed="true">προς 20/3</button>
+          </span>
+        </div>
+        <div><span class="seglabel">Επίπεδο</span>
+          <span class="seg" role="group" aria-label="Επίπεδο">
+            <button type="button" id="lt" aria-pressed="true">Θερμοκρασία χάρτη</button>
+            <button type="button" id="lb" aria-pressed="false">Λεκάνες ψυχρού αέρα</button>
+          </span>
+        </div>
+      </div>
+      <div class="mapwrap"><canvas id="map" tabindex="0" aria-label="Χάρτης ελάχιστης θερμοκρασίας της περιοχής με σταθμούς. Πάτησε σε ένα σημείο για την αναφορά του."></canvas></div>
+      <div class="legend" id="legend"></div>
+      <div class="picks" aria-label="Γρήγορη επιλογή σημείου">
+        <button type="button" data-lat="40.9833" data-lon="22.0538">Σταθμός Αριδαίας (λεκάνη)</button>
+        <button type="button" data-lat="40.95" data-lon="22.12">Λεκάνη Αλμωπίας</button>
+        <button type="button" data-lat="40.7667" data-lon="22.3167">Κάμπος Γιαννιτσών</button>
+        <button type="button" data-lat="40.6249" data-lon="22.0701">Νάουσα (πλαγιά)</button>
+      </div>
+    </section>
+
+    <aside class="report" id="report" aria-live="polite"></aside>
+  </main>
+
+  <section class="method">
+    <div>
+      <h2>Γιατί ο χάρτης χρειάζεται διόρθωση</h2>
+      <p>Το ERA5-Land, ο δωρεάν ευρωπαϊκός χάρτης καιρού, δίνει μία τιμή για κάθε τετράγωνο 9×9 χλμ. Τις καθαρές, άπνοες νύχτες ο κρύος αέρας κυλά προς τα χαμηλά και μαζεύεται στις λεκάνες, κάτι που ένα τόσο μεγάλο τετράγωνο δεν βλέπει. Η συνηθισμένη διόρθωση υψομέτρου (6,5°C ανά 1.000 μ.) υποθέτει ότι χαμηλά κάνει πιο ζέστη, οπότε εκεί κάνει το λάθος μεγαλύτερο.</p>
+      <div class="tbl">
+        <table>
+          <caption class="note" style="text-align:left;caption-side:bottom;padding-top:6px">Ελάχιστη θερμοκρασία στο επεισόδιο 19–20/3/2025, σε °C. Σταθμοί του Εθνικού Αστεροσκοπείου Αθηνών, ωριαίο ERA5-Land.</caption>
+          <thead><tr><th>Σταθμός</th><th>Θέση</th><th class="n">Μέτρηση</th><th class="n">Χάρτης</th><th class="n">Χάρτης + διόρθωση υψομ.</th></tr></thead>
+          <tbody id="testrows"></tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h2>Τι κάνει το πρωτότυπο και τι έρχεται</h2>
+      <p><b>Σήμερα:</b> ωριαίο ERA5-Land για όλη την περιοχή, ανάγλυφο από το Copernicus DEM, σταθμοί του Αστεροσκοπείου, όρια νέκρωσης ανθέων ανά καλλιέργεια και στάδιο<span id="histnote"></span>. Η προτεραιότητα για τον εκτιμητή βγαίνει από τον χάρτη, τον κοντινότερο σταθμό και τη θέση του σημείου στο ανάγλυφο.</p>
+      <p><b>Φάση Β:</b> μοντέλο μηχανικής μάθησης που μαθαίνει το λάθος του χάρτη από όλες τις ψυχρές νύχτες 2006–2025 και δίνει θερμοκρασία σε πλέγμα 100 μ. με γνωστό περιθώριο λάθους, ανέβασμα των αγροτεμαχίων ενός συνεταιρισμού και αναφορά σε PDF.</p>
+      <ul>
+        <li>Οι τιμές του σταθμού είναι το ελάχιστο του Μαρτίου, που σημειώθηκε τη νύχτα που αναφέρεται.</li>
+        <li>Θέσεις, υψόμετρα και τρόπος τοποθέτησης των σταθμών από τον κατάλογο του δικτύου του Αστεροσκοπείου. Οι σταθμοί της Νάουσας και της Βέροιας (πόλη) είναι σε ταράτσες κτιρίων, οπότε μετρούν πιο ζεστά τις νύχτες παγετού.</li>
+        <li>Τα όρια νέκρωσης προέρχονται από εργαστηριακά πειράματα 30 λεπτών· στο χωράφι ισχύουν κατά προσέγγιση.</li>
+      </ul>
+    </div>
+  </section>
+
+  <p class="src">Δεδομένα: <a href="https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land" target="_blank" rel="noopener">Copernicus ERA5-Land</a> και Copernicus DEM, μέσω <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0) · σταθμοί: <a href="https://meteosearch.meteo.gr/" target="_blank" rel="noopener">Εθνικό Αστεροσκοπείο Αθηνών / meteo.gr</a>, αρχείο ρεκόρ 2006–2025 · όρια νέκρωσης: <a href="https://mrcc.purdue.edu/modules/vip/docs/PictureTableFFThresholds.pdf" target="_blank" rel="noopener">πίνακες MSU/WSU (MRCC)</a>. Πρωτότυπο για το Thessaloniki FoodTech Hackathon 2026, όχι για χρήση σε αποζημιώσεις. Σχεδιασμός και ανάπτυξη: Όμηρος Λούπης.</p>
+</div>
+
+<script>
+const D = __DATA__;
+const LAT0 = 40.45, LAT1 = 41.15, LON0 = 21.85, LON1 = 22.55;
+const COSLAT = Math.cos(40.8 * Math.PI / 180);
+const N19 = [0, 16], N20 = [24, 40];
+const CROPS = {
+  peach: { name: 'Ροδακινιά', stages: [ { id: 'fb', name: 'Πλήρης άνθιση', t10: -2.8, t90: -4.4 }, { id: 'pb', name: 'Μετά την άνθιση', t10: -2.2, t90: -3.9 } ] },
+  cherry: { name: 'Κερασιά', stages: [ { id: 'bl', name: 'Άνθιση', t10: -2.2, t90: -3.9 } ] },
+  apricot: { name: 'Βερικοκιά', stages: [ { id: 'fb', name: 'Πλήρης άνθιση', t10: -2.8, t90: -5.6 } ] }
+};
+const state = { night: 20, layer: 't', sel: { lat: 40.9833, lon: 22.0538 }, crop: 'peach', stage: 'fb' };
+
+const fmt = (v, d = 1) => (v < -0.04 ? '−' : '') + Math.abs(v).toFixed(d).replace('.', ',');
+const fmtS = v => (v > 0.04 ? '+' : '') + fmt(v);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------- terrain ---------- */
+const DEM = D.dem;
+function demAt(lat, lon) {
+  let y = (lat - DEM.lat0) / DEM.step, x = (lon - DEM.lon0) / DEM.step;
+  y = Math.max(0, Math.min(DEM.n - 1.0001, y)); x = Math.max(0, Math.min(DEM.n - 1.0001, x));
+  const i = Math.floor(y), j = Math.floor(x), fy = y - i, fx = x - j, n = DEM.n, e = DEM.e;
+  return e[i * n + j] * (1 - fy) * (1 - fx) + e[(i + 1) * n + j] * fy * (1 - fx) + e[i * n + j + 1] * (1 - fy) * fx + e[(i + 1) * n + j + 1] * fy * fx;
+}
+function terrain(lat, lon) {
+  const e = demAt(lat, lon);
+  const dx = 0.02 * 111 * COSLAT * 1000, dy = 0.02 * 111 * 1000;
+  const sx = (demAt(lat, lon + 0.02) - demAt(lat, lon - 0.02)) / (2 * dx), sy = (demAt(lat + 0.02, lon) - demAt(lat - 0.02, lon)) / (2 * dy);
+  const slope = Math.hypot(sx, sy) * 100;
+  let enc = 0;
+  for (let k = 0; k < 16; k++) {
+    const a = 2 * Math.PI * k / 16; let mx = -1e9;
+    for (let r = 1; r <= 15; r += 0.5) {
+      const la = lat + r * Math.cos(a) / 111, lo = lon + r * Math.sin(a) / (111 * COSLAT);
+      if (la >= LAT0 && la <= LAT1 && lo >= LON0 && lo <= LON1) mx = Math.max(mx, demAt(la, lo));
+    }
+    if (mx - e > 250) enc++;
+  }
+  let cls, txt;
+  if (slope >= 5) { cls = 'slope'; txt = 'Ο κρύος αέρας κυλά προς τα κάτω, οπότε εδώ συνήθως κάνει λιγότερο κρύο από τον πάτο της κοιλάδας.'; }
+  else if (enc >= 10) { cls = 'basin'; txt = 'Βουνά σε ' + enc + ' από τις 16 κατευθύνσεις μέσα σε 15 χλμ. Εδώ λιμνάζει ο κρύος αέρας τις άπνοες νύχτες και ο χάρτης συνήθως δείχνει πιο ζεστά απ’ ό,τι έκανε.'; }
+  else if (e < 250) { cls = 'plain'; txt = 'Ο κρύος αέρας έχει διέξοδο, οπότε ο χάρτης πέφτει λιγότερο έξω.'; }
+  else { cls = 'upland'; txt = 'Σημείο σε υψόμετρο, χωρίς μεγάλη κλίση.'; }
+  return { e, slope, enc, cls, txt, name: { slope: 'Πλαγιά', basin: 'Κλειστή λεκάνη', plain: 'Ανοιχτός κάμπος', upland: 'Ύψωμα' }[cls] };
+}
+let basinGrid = null;
+function computeBasinGrid() {
+  basinGrid = new Float32Array(DEM.n * DEM.n);
+  for (let i = 0; i < DEM.n; i++) for (let j = 0; j < DEM.n; j++) {
+    const t = terrain(DEM.lat0 + i * DEM.step, DEM.lon0 + j * DEM.step);
+    basinGrid[i * DEM.n + j] = t.cls === 'basin' ? 1 : 0;
+  }
+}
+
+/* ---------- ERA5-Land cells ---------- */
+function cellIdx(lat, lon) {
+  const i = Math.max(0, Math.min(6, Math.round((lat - 40.5) / 0.1))), j = Math.max(0, Math.min(6, Math.round((lon - 21.9) / 0.1)));
+  return i * 7 + j;
+}
+const hourLabel = k => { const t = new Date(Date.UTC(2025, 2, 18, 18 + k)); return t.getUTCDate() + '/3 ' + String(t.getUTCHours()).padStart(2, '0') + ':00'; };
+function nightMin(arr, w) { let mn = Infinity, at = -1; for (let k = w[0]; k <= w[1]; k++) if (arr[k] < mn) { mn = arr[k]; at = k; } return { v: mn, k: at }; }
+
+/* ---------- colours ---------- */
+const STOPS = [[-6, [29, 78, 137]], [-4, [47, 109, 176]], [-2, [110, 159, 209]], [0, [201, 220, 239]], [2, [241, 230, 200]], [5, [232, 184, 113]], [9, [208, 123, 58]], [12, [168, 82, 42]]];
+function tcol(v, a = 1) {
+  if (v <= STOPS[0][0]) return `rgba(${STOPS[0][1]},${a})`;
+  for (let k = 1; k < STOPS.length; k++) if (v <= STOPS[k][0]) {
+    const [v0, c0] = STOPS[k - 1], [v1, c1] = STOPS[k], f = (v - v0) / (v1 - v0);
+    return `rgba(${c0.map((c, m) => Math.round(c + (c1[m] - c) * f)).join(',')},${a})`;
+  }
+  return `rgba(${STOPS[STOPS.length - 1][1]},${a})`;
+}
+function hexRgb(h) { const m = h.replace('#', ''); return [0, 2, 4].map(i => parseInt(m.slice(i, i + 2), 16)); }
+
+/* ---------- map ---------- */
+const cv = document.getElementById('map');
+let W = 0, H = 0, baseCanvas = null;
+const X = lon => (lon - LON0) / (LON1 - LON0) * W, Y = lat => (LAT1 - lat) / (LAT1 - LAT0) * H;
+function buildBase() {
+  const bw = 200, bh = Math.round(bw * (LAT1 - LAT0) / ((LON1 - LON0) * COSLAT));
+  const c = document.createElement('canvas'); c.width = bw; c.height = bh;
+  const g = c.getContext('2d'), img = g.createImageData(bw, bh);
+  const lo = hexRgb(css('--land-lo')), hi = hexRgb(css('--land-hi')), sh = hexRgb(css('--shade'));
+  const dLon = (LON1 - LON0) / bw, dLat = (LAT1 - LAT0) / bh, mx = dLon * 111000 * COSLAT, my = dLat * 111000;
+  for (let py = 0; py < bh; py++) for (let px = 0; px < bw; px++) {
+    const lat = LAT1 - (py + 0.5) * dLat, lon = LON0 + (px + 0.5) * dLon, e = demAt(lat, lon);
+    const gx = (demAt(lat, lon + dLon) - demAt(lat, lon - dLon)) / (2 * mx) * 2.2, gy = (demAt(lat + dLat, lon) - demAt(lat - dLat, lon)) / (2 * my) * 2.2;
+    const nz = 1 / Math.hypot(gx, gy, 1), nx = -gx * nz, ny = -gy * nz;
+    const lx = -0.5, ly = 0.6, lz = 0.62; const ln = Math.hypot(lx, ly, lz);
+    let s = (nx * lx + ny * ly + nz * lz) / ln; s = Math.max(0, Math.min(1, s));
+    const f = Math.min(1, Math.max(0, e / 1600));
+    const shade = 0.55 + 0.45 * s;
+    const k = (py * bw + px) * 4;
+    for (let m = 0; m < 3; m++) { const base = lo[m] + (hi[m] - lo[m]) * f; img.data[k + m] = Math.round(sh[m] + (base - sh[m]) * shade); }
+    img.data[k + 3] = 255;
+  }
+  g.putImageData(img, 0, 0); baseCanvas = c;
+}
+function draw() {
+  const dpr = window.devicePixelRatio || 1;
+  W = cv.clientWidth; H = Math.round(W * (LAT1 - LAT0) / ((LON1 - LON0) * COSLAT));
+  cv.style.height = H + 'px'; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.imageSmoothingEnabled = true; g.drawImage(baseCanvas, 0, 0, W, H);
+  const ink = css('--ink'), halo = css('--halo'), muted = css('--muted');
+  const w = state.night === 19 ? N19 : N20;
+  if (state.layer === 't') {
+    D.cells.forEach(c => {
+      const m = nightMin(c.h, w).v / 10;
+      const x0 = X(c.lon - 0.05), x1 = X(c.lon + 0.05), y0 = Y(c.lat + 0.05), y1 = Y(c.lat - 0.05);
+      g.fillStyle = tcol(m, 0.58); g.fillRect(x0, y0, x1 - x0, y1 - y0);
+      g.strokeStyle = 'rgba(255,255,255,0.35)'; g.lineWidth = 1; g.strokeRect(x0 + 0.5, y0 + 0.5, x1 - x0 - 1, y1 - y0 - 1);
+      if (x1 - x0 > 38) { g.font = '600 11px "JetBrains Mono", monospace'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.lineWidth = 3; g.strokeStyle = halo; const tx = fmt(m); g.strokeText(tx, x0 + 5, y0 + 10); g.fillStyle = ink; g.fillText(tx, x0 + 5, y0 + 10); }
+    });
+  } else {
+    const c = document.createElement('canvas'); c.width = DEM.n; c.height = DEM.n; const gg = c.getContext('2d');
+    const img = gg.createImageData(DEM.n, DEM.n); const col = css('--basin').match(/[\d.]+/g).map(Number);
+    for (let i = 0; i < DEM.n; i++) for (let j = 0; j < DEM.n; j++) { const k = ((DEM.n - 1 - i) * DEM.n + j) * 4, b = basinGrid[i * DEM.n + j]; img.data[k] = col[0]; img.data[k + 1] = col[1]; img.data[k + 2] = col[2]; img.data[k + 3] = Math.round(b * (col[3] ?? 0.4) * 255); }
+    gg.putImageData(img, 0, 0);
+    const half = DEM.step / 2; g.drawImage(c, X(DEM.lon0 - half), Y(DEM.lat0 + (DEM.n - 1) * DEM.step + half), X(DEM.lon0 + (DEM.n - 1) * DEM.step + half) - X(DEM.lon0 - half), Y(DEM.lat0 - half) - Y(DEM.lat0 + (DEM.n - 1) * DEM.step + half));
+  }
+  g.textBaseline = 'middle';
+  D.towns.forEach(t => {
+    const x = X(t.lon), y = Y(t.lat);
+    g.beginPath(); g.arc(x, y, 3, 0, Math.PI * 2); g.fillStyle = halo; g.fill(); g.lineWidth = 1.5; g.strokeStyle = muted; g.stroke();
+    g.font = '500 12px "Commissioner", sans-serif'; g.textAlign = t.left ? 'right' : 'left'; g.lineWidth = 3; g.strokeStyle = halo; const tx2 = t.left ? x - 6 : x + 6; g.strokeText(t.name, tx2, y); g.fillStyle = muted; g.fillText(t.name, tx2, y);
+  });
+  D.st.forEach(s => {
+    const x = X(s.lon), y = Y(s.lat);
+    g.beginPath(); g.arc(x, y, 6, 0, Math.PI * 2); g.fillStyle = tcol(s.t, 1); g.fill(); g.lineWidth = 2; g.strokeStyle = ink; g.stroke();
+    const label = s.short + ' ' + fmt(s.t) + '°';
+    g.font = '600 12px "Commissioner", sans-serif'; g.textAlign = s.left ? 'right' : 'left'; g.lineWidth = 3.5; g.strokeStyle = halo;
+    const lx = s.left ? x - 10 : x + 10; g.strokeText(label, lx, y); g.fillStyle = ink; g.fillText(label, lx, y);
+  });
+  const sx = X(state.sel.lon), sy = Y(state.sel.lat), acc = css('--accent');
+  g.lineWidth = 2.5; g.strokeStyle = halo; g.beginPath(); g.arc(sx, sy, 11, 0, Math.PI * 2); g.stroke();
+  g.lineWidth = 2; g.strokeStyle = acc; g.beginPath(); g.arc(sx, sy, 11, 0, Math.PI * 2); g.stroke();
+  g.beginPath(); g.moveTo(sx - 17, sy); g.lineTo(sx - 6, sy); g.moveTo(sx + 6, sy); g.lineTo(sx + 17, sy); g.moveTo(sx, sy - 17); g.lineTo(sx, sy - 6); g.moveTo(sx, sy + 6); g.lineTo(sx, sy + 17); g.stroke();
+}
+function legend() {
+  const el = document.getElementById('legend');
+  if (state.layer === 't') {
+    const grad = STOPS.filter(s => s[0] <= 9).map(s => `${tcol(s[0], 0.85)} ${((s[0] + 6) / 15 * 100).toFixed(0)}%`).join(',');
+    el.innerHTML = `<div class="scale"><div class="bar" style="background:linear-gradient(90deg,${grad})"></div><div class="ticks"><span>−6°</span><span>−3°</span><span>0°</span><span>+3°</span><span>+6°</span><span>+9°</span></div></div>
+    <span class="key">Τετράγωνα: ελάχιστη θερμοκρασία ERA5-Land (9 χλμ.) τη νύχτα ${state.night === 19 ? 'προς 19/3' : 'προς 20/3'}</span>
+    <span class="key"><span class="dot" style="border:2px solid var(--ink);background:var(--accent-soft)"></span>Σταθμός Αστεροσκοπείου, ελάχιστο επεισοδίου</span>`;
+  } else {
+    el.innerHTML = `<span class="key"><span class="dot" style="background:var(--basin)"></span>Κλειστή λεκάνη: βουνά σε 10+ από 16 κατευθύνσεις, μέσα σε 15 χλμ., και μικρή κλίση</span>
+    <span class="key"><span class="dot" style="border:2px solid var(--ink);background:var(--accent-soft)"></span>Σταθμός Αστεροσκοπείου</span>`;
+  }
+}
+
+/* ---------- report ---------- */
+function sevClass(t, st) { if (t <= st.t90) return 2; if (t <= st.t10) return 1; return 0; }
+const SEVTXT = ['Μικρή ή καμία ζημιά', 'Μερική ζημιά (10–90% των ανθέων)', 'Σοβαρή ζημιά (πάνω από 90%)'];
+function distKm(a, b) { return Math.hypot((a.lat - b.lat) * 111, (a.lon - b.lon) * 111 * COSLAT); }
+function sparkNight(raw, cor, st) {
+  const vals = raw.concat(cor), lo = Math.min(-6, Math.floor(Math.min(...vals) - 0.5)), hi = Math.max(6, Math.ceil(Math.max(...vals) + 0.5));
+  const Wd = 340, Hd = 150, l = 34, r = 8, t = 10, b = 24, n = raw.length;
+  const x = k => l + k / (n - 1) * (Wd - l - r), y = v => t + (hi - v) / (hi - lo) * (Hd - t - b);
+  const path = a => a.map((v, k) => (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ');
+  const ticks = [0, 12, 24, 36].map(k => `<text x="${x(k)}" y="${Hd - 6}" font-size="9.5" fill="var(--muted)" text-anchor="middle">${hourLabel(k)}</text>`).join('');
+  const stp = hi - lo > 14 ? 4 : 2, tv = []; for (let v = Math.ceil(lo / stp) * stp; v <= hi; v += stp) tv.push(v);
+  const yt = tv.map(v => `<text x="${l - 5}" y="${y(v) + 3}" font-size="9.5" fill="var(--muted)" text-anchor="end">${fmt(v, 0)}°</text><line x1="${l}" x2="${Wd - r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="${v === 0 ? 1.2 : 0.6}"/>`).join('');
+  const th = `<line x1="${l}" x2="${Wd - r}" y1="${y(st.t10)}" y2="${y(st.t10)}" stroke="var(--sev1)" stroke-dasharray="4 3"/><line x1="${l}" x2="${Wd - r}" y1="${y(st.t90)}" y2="${y(st.t90)}" stroke="var(--sev2)" stroke-dasharray="4 3"/>
+  <text x="${Wd - r - 2}" y="${y(st.t10) - 3}" font-size="9.5" fill="var(--sev1)" text-anchor="end">10% νέκρωση</text><text x="${Wd - r - 2}" y="${y(st.t90) + 11}" font-size="9.5" fill="var(--sev2)" text-anchor="end">90% νέκρωση</text>`;
+  return `<svg viewBox="0 0 ${Wd} ${Hd}" width="100%" role="img" aria-label="Ωριαία θερμοκρασία του χάρτη τις δύο νύχτες">${yt}${th}
+  <path d="${path(raw)}" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="3 2"/><path d="${path(cor)}" fill="none" stroke="var(--accent)" stroke-width="2"/>${ticks}</svg>
+  <p class="note"><span style="color:var(--accent)">━</span> χάρτης με διόρθωση υψομέτρου · <span style="color:var(--muted)">┅</span> τετράγωνο χωρίς διόρθωση</p>`;
+}
+function sparkHist(arr) {
+  const Wd = 340, Hd = 120, l = 30, r = 6, t = 8, b = 20, lo = Math.min(-8, Math.floor(Math.min(...arr) / 10 / 4) * 4), hi = 6, n = arr.length, bw = (Wd - l - r) / n;
+  const y = v => t + (hi - v) / (hi - lo) * (Hd - t - b);
+  const bars = arr.map((v10, k) => { const v = v10 / 10, y0 = y(Math.max(0, v)), y1 = y(Math.min(0, v)); const c = v <= -2 ? 'var(--sev2)' : 'var(--muted)'; return `<rect x="${(l + k * bw + 1).toFixed(1)}" y="${y0.toFixed(1)}" width="${(bw - 2).toFixed(1)}" height="${Math.max(1, y1 - y0).toFixed(1)}" fill="${c}" opacity="${v <= -2 ? 0.9 : 0.45}"><title>${D.years[k]}: ${fmt(v)}°C</title></rect>`; }).join('');
+  const yt = [lo, -4, -2, 0, 4].filter((v, i, q) => q.indexOf(v) === i).map(v => `<text x="${l - 4}" y="${y(v) + 3}" font-size="9" fill="var(--muted)" text-anchor="end">${fmt(v, 0)}°</text><line x1="${l}" x2="${Wd - r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="${v === 0 ? 1.2 : 0.5}"${v === -2 ? ' stroke-dasharray="3 2"' : ''}/>`).join('');
+  const xt = [0, 10, 20, n - 1].filter(k => k < n).map(k => `<text x="${l + (k + 0.5) * bw}" y="${Hd - 5}" font-size="9" fill="var(--muted)" text-anchor="middle">${D.years[k]}</text>`).join('');
+  return `<svg viewBox="0 0 ${Wd} ${Hd}" width="100%" role="img" aria-label="Χαμηλότερη θερμοκρασία στο διάστημα ανθοφορίας ανά έτος">${yt}${bars}${xt}</svg>`;
+}
+function report() {
+  const p = state.sel, tr = terrain(p.lat, p.lon), ci = cellIdx(p.lat, p.lon), c = D.cells[ci];
+  const corr = c.h.map(v => v / 10 + 0.0065 * (c.elev - tr.e)), raw = c.h.map(v => v / 10);
+  const r19 = nightMin(raw, N19), r20 = nightMin(raw, N20), worst = r19.v <= r20.v ? r19 : r20;
+  const c19 = nightMin(corr, N19), c20 = nightMin(corr, N20), cw = c19.v <= c20.v ? c19 : c20;
+  const crop = CROPS[state.crop]; if (!crop.stages.find(s => s.id === state.stage)) state.stage = crop.stages[0].id;
+  const st = crop.stages.find(s => s.id === state.stage);
+  const night = worst.k <= 16 ? 19 : 20, gdd = night === 19 ? c.g19 : c.g20;
+  const hrs = th => corr.filter(v => v <= th).length;
+  let near = null, nd = 1e9; D.st.forEach(s => { const d = distKm(p, s); if (d < nd) { nd = d; near = s; } });
+  const useSt = nd <= 12;
+  const sMap = sevClass(cw.v, st), sRaw = sevClass(worst.v, st), sSt = useSt ? sevClass(near.t, st) : null;
+  let prio = 0, why = [];
+  if (useSt && sSt === 2) { prio = 2; why.push(`ο σταθμός ${near.name} μέτρησε ${fmt(near.t)}°C`); }
+  if (sMap === 2 || sRaw === 2) { prio = 2; why.push('ο χάρτης δείχνει θερμοκρασία κάτω από το όριο του 90%'); }
+  if (tr.cls === 'basin' && worst.v <= 0) { prio = 2; why.push('το σημείο είναι σε κλειστή λεκάνη και ο χάρτης δείχνει παγετό· στο τεστ μας οι σταθμοί λεκάνης ήταν 2–5°C πιο κρύοι από τον χάρτη'); }
+  if (prio < 2) {
+    if ((useSt && sSt === 1) || sMap === 1 || sRaw === 1) { prio = 1; why.push('μία από τις πηγές δείχνει μερική ζημιά'); }
+    else if (tr.cls === 'basin' || (tr.cls === 'plain' && worst.v <= 0.5)) { prio = 1; why.push('χαμηλό σημείο με θερμοκρασία κοντά στο μηδέν'); }
+  }
+  if (!why.length) why.push('καμία πηγή δεν δείχνει θερμοκρασία κοντά στα όρια νέκρωσης');
+  const PN = ['Χαμηλή προτεραιότητα για εκτιμητή', 'Μέτρια προτεραιότητα για εκτιμητή', 'Υψηλή προτεραιότητα για εκτιμητή'];
+  const disagree = useSt ? near.t - cw.v : null;
+  const yrs = D.hist ? D.hist[ci] : null, nFrost = yrs ? yrs.filter(v => v <= -20).length : 0;
+  const stageNote = gdd < 150
+    ? `Βαθμοημέρες από 1/2 στο τετράγωνο: <b>${gdd}</b>. Πιθανότατα η άνθιση δεν είχε ολοκληρωθεί. Ο γεωπόνος δηλώνει το πραγματικό στάδιο· εδώ μετράμε με τα όρια της άνθισης, ως χειρότερη περίπτωση.`
+    : `Βαθμοημέρες από 1/2 στο τετράγωνο: <b>${gdd}</b>. Πιθανότατα τα δέντρα ήταν σε άνθιση ή μετά. Ο γεωπόνος μπορεί να αλλάξει το στάδιο.`;
+  const sevChip = s => s === null ? '<span class="sev sna">χωρίς σταθμό</span>' : `<span class="sev s${s}">${SEVTXT[s]}</span>`;
+  document.getElementById('report').innerHTML = `
+    <div class="rhead"><div><h2>Αναφορά παγετού</h2><div class="where">${p.lat.toFixed(4)}° Β, ${p.lon.toFixed(4)}° Α · ${Math.round(tr.e)} μ. · επεισόδιο 19–20/3/2025</div></div></div>
+    <div class="prio p${prio}"><b>${PN[prio]}</b><span>Γιατί: ${why.join('· ')}.</span></div>
+    <div><h3>Θέση στο ανάγλυφο</h3><p class="terrain"><b>${tr.name}.</b> ${tr.txt}</p></div>
+    <div><h3>Πόσο κρύο έκανε</h3><dl class="kv">
+      <dt>Χάρτης ERA5-Land, τετράγωνο 9 χλμ. (μέσο υψόμετρο ${c.elev} μ.)</dt><dd>${fmt(worst.v)}°C<small>${hourLabel(worst.k)}</small></dd>
+      <dt>Ίδιος χάρτης με διόρθωση υψομέτρου για τα ${Math.round(tr.e)} μ. του σημείου</dt><dd>${fmt(cw.v)}°C<small>${hourLabel(cw.k)}</small></dd>
+      <dt>${useSt ? `Σταθμός ${near.name}, ${nd < 0.5 ? 'στο σημείο' : nd.toFixed(1).replace('.', ',') + ' χλμ. μακριά'} (${near.elev} μ.)` : 'Κοντινότερος σταθμός'}</dt><dd>${useSt ? `${fmt(near.t)}°C<small>νύχτα προς ${near.day}</small>` : `<small>κανένας σε 12 χλμ.</small>`}</dd>
+      <dt>Ώρες κάτω από −2 / −3 / −4°C (χάρτης με διόρθωση)</dt><dd>${hrs(-2)} / ${hrs(-3)} / ${hrs(-4)}</dd>
+    </dl>${useSt && Math.abs(disagree) >= 2 ? `<p class="note" style="margin-top:6px">Ο σταθμός και ο χάρτης διαφωνούν κατά ${fmt(Math.abs(disagree))}°C. Αυτή η διαφορά είναι που διορθώνει το μοντέλο της Φάσης Β.</p>` : ''}</div>
+    <div class="row2">
+      <label for="crop">Καλλιέργεια<select id="crop">${Object.entries(CROPS).map(([k, v]) => `<option value="${k}"${k === state.crop ? ' selected' : ''}>${v.name}</option>`).join('')}</select></label>
+      <label for="stage">Στάδιο<select id="stage">${crop.stages.map(s => `<option value="${s.id}"${s.id === state.stage ? ' selected' : ''}>${s.name}</option>`).join('')}</select></label>
+      <span class="note">Όρια: 10% νέκρωση στους ${fmt(st.t10)}°C, 90% στους ${fmt(st.t90)}°C</span>
+    </div>
+    <p class="note" style="margin-top:-8px">${stageNote}</p>
+    <div><h3>Πιθανή ζημιά ανθέων</h3><div class="sevs">
+      <span>Με βάση τον χάρτη (με διόρθωση υψομέτρου)</span>${sevChip(sMap)}
+      <span>Με βάση τον χάρτη (τετράγωνο)</span>${sevChip(sRaw)}
+      <span>Με βάση τον κοντινό σταθμό</span>${sevChip(sSt)}
+    </div></div>
+    <div><h3>Οι δύο νύχτες, ώρα προς ώρα</h3>${sparkNight(raw, corr, st)}</div>
+    ${yrs ? `<div><h3>Ιστορικό ${D.years[0]}–${D.years[D.years.length - 1]}, διάστημα ανθοφορίας 10/3–20/4</h3>${sparkHist(yrs)}
+      <p class="note">Ο χάρτης δείχνει παγετό −2°C ή χαμηλότερα σε <b>${nFrost} από ${yrs.length}</b> χρονιές σε αυτό το τετράγωνο. Είναι ο χάρτης χωρίς διόρθωση, οπότε σε λεκάνες μάλλον υποτιμά πόσο συχνά παγώνει.</p></div>` : ''}
+    <p class="note">Πρωτότυπο. Η διόρθωση με μηχανική μάθηση δεν είναι ακόμα ενεργή· η προτεραιότητα βγαίνει από τον χάρτη, τον κοντινό σταθμό και το ανάγλυφο.</p>`;
+  document.getElementById('crop').addEventListener('change', e => { state.crop = e.target.value; state.stage = CROPS[state.crop].stages[0].id; report(); });
+  document.getElementById('stage').addEventListener('change', e => { state.stage = e.target.value; report(); });
+}
+function testTable() {
+  document.getElementById('testrows').innerHTML = D.test.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="n">${fmt(r[2])}</td><td class="n">${fmt(r[3])}</td><td class="n">${fmt(r[4])}</td></tr>`).join('');
+}
+
+/* ---------- events ---------- */
+function setPressed(a, b, on) { document.getElementById(a).setAttribute('aria-pressed', on ? 'true' : 'false'); document.getElementById(b).setAttribute('aria-pressed', on ? 'false' : 'true'); }
+document.getElementById('n19').onclick = () => { state.night = 19; setPressed('n19', 'n20', true); draw(); legend(); };
+document.getElementById('n20').onclick = () => { state.night = 20; setPressed('n19', 'n20', false); draw(); legend(); };
+document.getElementById('lt').onclick = () => { state.layer = 't'; setPressed('lt', 'lb', true); draw(); legend(); };
+document.getElementById('lb').onclick = () => { state.layer = 'b'; setPressed('lt', 'lb', false); draw(); legend(); };
+cv.addEventListener('click', e => {
+  const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+  state.sel = { lat: LAT1 - y / H * (LAT1 - LAT0), lon: LON0 + x / W * (LON1 - LON0) }; draw(); report();
+});
+cv.addEventListener('keydown', e => {
+  const step = 0.01, m = { ArrowUp: [step, 0], ArrowDown: [-step, 0], ArrowLeft: [0, -step], ArrowRight: [0, step] }[e.key];
+  if (!m) return; e.preventDefault();
+  state.sel = { lat: Math.min(LAT1, Math.max(LAT0, state.sel.lat + m[0])), lon: Math.min(LON1, Math.max(LON0, state.sel.lon + m[1])) }; draw(); report();
+});
+document.querySelectorAll('.picks button').forEach(b => b.addEventListener('click', () => { state.sel = { lat: +b.dataset.lat, lon: +b.dataset.lon }; draw(); report(); }));
+function retheme() { buildBase(); draw(); }
+try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', retheme); } catch (e) {}
+new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+new ResizeObserver(() => draw()).observe(cv.parentElement);
+computeBasinGrid(); buildBase(); draw(); legend(); report(); testTable();
+if (D.hist) document.getElementById('histnote').textContent = `, και ιστορικό ${D.years.length} ετών για κάθε τετράγωνο`;
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+</script>
+</body>
+</html>
