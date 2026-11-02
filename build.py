@@ -25,7 +25,10 @@ st=[
 ]
 towns=[{'name':'Έδεσσα','lat':40.802,'lon':22.047},{'name':'Σκύδρα','lat':40.767,'lon':22.155},{'name':'Γιαννιτσά','lat':40.792,'lon':22.408},{'name':'Αλεξάνδρεια','lat':40.627,'lon':22.447,'left':True}]
 test=[['Αριδαία','Κλειστή λεκάνη',-5.1,-2.8,-0.8],['Πλατύκαμπος (Λάρισα)','Κάμπος',-2.3,2.6,2.1],['Αγιά (Λάρισα)','Κάμπος, πρόποδες',-1.4,1.6,3.2],['Καρυώτισσα (Γιαννιτσά)','Ανοιχτός κάμπος',-1.1,-1.7,-0.8],['Νάουσα','Πλαγιά, σε ταράτσα',1.2,-2.9,-0.9]]
-D={'dem':{'lat0':40.45,'lon0':21.85,'n':36,'step':0.02,'e':dem},'cells':cells,'hist':hist,'years':years,'st':st,'towns':towns,'test':test}
+cerra={}
+for part in open(os.path.join(DATA,'raw_cerra.txt')).read().strip().split(';'):
+    k,v=part.split(':'); cerra[k]=[int(x) for x in v.split(',')]
+D={'cerra':cerra,'dem':{'lat0':40.45,'lon0':21.85,'n':36,'step':0.02,'e':dem},'cells':cells,'hist':hist,'years':years,'st':st,'towns':towns,'test':test}
 html=open(os.path.join(ROOT,'src','template.html')).read().replace('__DATA__', json.dumps(D,ensure_ascii=False,separators=(',',':')))
 open(os.path.join(ROOT,'index.html'),'w').write(html)
 print('index.html:', len(html), 'bytes,', len(years), 'years of history')

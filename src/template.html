@@ -151,7 +151,8 @@ ul { padding-left: 18px; margin: 6px 0; }
         </div>
         <div><span class="seglabel">Επίπεδο</span>
           <span class="seg" role="group" aria-label="Επίπεδο">
-            <button type="button" id="lt" aria-pressed="true">Θερμοκρασία χάρτη</button>
+            <button type="button" id="lt" aria-pressed="true">ERA5-Land (9 χλμ.)</button>
+            <button type="button" id="lc" aria-pressed="false">CERRA (5,5 χλμ.)</button>
             <button type="button" id="lb" aria-pressed="false">Λεκάνες ψυχρού αέρα</button>
           </span>
         </div>
@@ -175,15 +176,15 @@ ul { padding-left: 18px; margin: 6px 0; }
       <p>Το ERA5-Land, ο δωρεάν ευρωπαϊκός χάρτης καιρού, δίνει μία τιμή για κάθε τετράγωνο 9×9 χλμ. Τις καθαρές, άπνοες νύχτες ο κρύος αέρας κυλά προς τα χαμηλά και μαζεύεται σε κοιλάδες και κάμπους, κάτι που ένα τόσο μεγάλο τετράγωνο δεν βλέπει. Σε 5 σταθμούς της ΕΜΥ, σε όλες τις νύχτες Φεβρουαρίου–Απριλίου 2006–2025, ο χάρτης έπιασε μόνο το 47% των νυχτών παγετού· τις νύχτες που πάγωσε ο σταθμός ήταν κατά μέσο όρο 2,3°C πιο ζεστός, όπως και στους 125 σταθμούς του Αστεροσκοπείου. Η συνηθισμένη διόρθωση υψομέτρου (6,5°C ανά 1.000 μ.) κάνει το λάθος μεγαλύτερο στους σταθμούς που είναι πολύ χαμηλότερα από το τετράγωνο. Ένας πιο λεπτομερής χάρτης, το CERRA (5,5 χλμ.), κόβει το λάθος κατά ένα τρίτο. <a href="https://github.com/Omiros-Loupis/Pachni/tree/main/analysis/validation" target="_blank" rel="noopener">Ο έλεγχος και ο κώδικας</a>.</p>
       <div class="tbl">
         <table>
-          <caption class="note" style="text-align:left;caption-side:bottom;padding-top:6px">Ελάχιστη θερμοκρασία στο επεισόδιο 19–20/3/2025, σε °C. Σταθμοί του Εθνικού Αστεροσκοπείου Αθηνών, ωριαίο ERA5-Land.</caption>
-          <thead><tr><th>Σταθμός</th><th>Θέση</th><th class="n">Μέτρηση</th><th class="n">Χάρτης</th><th class="n">Χάρτης + διόρθωση υψομ.</th></tr></thead>
+          <caption class="note" style="text-align:left;caption-side:bottom;padding-top:6px">Ελάχιστη θερμοκρασία τη νύχτα που έπιασε ο σταθμός το ελάχιστο του Μαρτίου (19 ή 20/3/2025), σε °C. Σταθμοί του Εθνικού Αστεροσκοπείου Αθηνών· χάρτες ERA5-Land και CERRA του Copernicus.</caption>
+          <thead><tr><th>Σταθμός</th><th>Θέση</th><th class="n">Μέτρηση</th><th class="n">ERA5-Land</th><th class="n">ERA5-Land + διόρθ. υψομ.</th><th class="n">CERRA</th></tr></thead>
           <tbody id="testrows"></tbody>
         </table>
       </div>
     </div>
     <div>
       <h2>Τι κάνει το πρωτότυπο και τι έρχεται</h2>
-      <p><b>Σήμερα:</b> ωριαίο ERA5-Land για όλη την περιοχή, ανάγλυφο από το Copernicus DEM σε πλέγμα περίπου 2 χλμ., σταθμοί του Αστεροσκοπείου, όρια νέκρωσης ανθέων ανά καλλιέργεια και στάδιο<span id="histnote"></span>. Η προτεραιότητα για τον εκτιμητή βγαίνει από τον χάρτη, τον κοντινότερο σταθμό και τη θέση του σημείου στο ανάγλυφο.</p>
+      <p><b>Σήμερα:</b> ωριαίο ERA5-Land για όλη την περιοχή, CERRA (5,5 χλμ.) για τη νύχτα του παγετού, ανάγλυφο από το Copernicus DEM σε πλέγμα περίπου 2 χλμ., σταθμοί του Αστεροσκοπείου, όρια νέκρωσης ανθέων ανά καλλιέργεια και στάδιο<span id="histnote"></span>. Η προτεραιότητα για τον εκτιμητή βγαίνει από τον χάρτη, τον κοντινότερο σταθμό και τη θέση του σημείου στο ανάγλυφο.</p>
       <p><b>Πρώτο μοντέλο:</b> μαθαίνει το λάθος του χάρτη από το ανάγλυφο γύρω από κάθε σταθμό. Σε σταθμούς που δεν είδε, ρίχνει το λάθος στις νύχτες παγετού από 2,9 σε 2,3°C. <b>Φάση Β:</b> εκπαίδευση πάνω στο CERRA και σε ημερήσια δεδομένα σταθμών, και ο διορθωμένος χάρτης δίπλα στον ακατέργαστο, με περιθώριο λάθους. <b>Αργότερα:</b> πλέγμα 100 μ., ανέβασμα των αγροτεμαχίων ενός συνεταιρισμού και αναφορά σε PDF.</p>
       <ul>
         <li>Οι τιμές του σταθμού είναι το ελάχιστο του Μαρτίου, που σημειώθηκε τη νύχτα που αναφέρεται.</li>
@@ -256,6 +257,10 @@ function cellIdx(lat, lon) {
   return i * 7 + j;
 }
 const hourLabel = k => { const t = new Date(Date.UTC(2025, 2, 18, 18 + k)); return t.getUTCDate() + '/3 ' + String(t.getUTCHours()).padStart(2, '0') + ':00'; };
+function cerraAt(lat, lon, night) {
+  const i = Math.max(0, Math.min(DEM.n - 1, Math.round((lat - DEM.lat0) / DEM.step))), j = Math.max(0, Math.min(DEM.n - 1, Math.round((lon - DEM.lon0) / DEM.step)));
+  return D.cerra[night][i * DEM.n + j] / 10;
+}
 function nightMin(arr, w) { let mn = Infinity, at = -1; for (let k = w[0]; k <= w[1]; k++) if (arr[k] < mn) { mn = arr[k]; at = k; } return { v: mn, k: at }; }
 
 /* ---------- colours ---------- */
@@ -310,6 +315,13 @@ function draw() {
       g.strokeStyle = 'rgba(255,255,255,0.35)'; g.lineWidth = 1; g.strokeRect(x0 + 0.5, y0 + 0.5, x1 - x0 - 1, y1 - y0 - 1);
       if (x1 - x0 > 38) { g.font = '600 11px "JetBrains Mono", monospace'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.lineWidth = 3; g.strokeStyle = halo; const tx = fmt(m); g.strokeText(tx, x0 + 5, y0 + 10); g.fillStyle = ink; g.fillText(tx, x0 + 5, y0 + 10); }
     });
+  } else if (state.layer === 'c') {
+    const v = D.cerra[state.night], h = DEM.step / 2;
+    for (let i = 0; i < DEM.n; i++) for (let j = 0; j < DEM.n; j++) {
+      const la = DEM.lat0 + i * DEM.step, lo = DEM.lon0 + j * DEM.step;
+      const x0 = X(lo - h), x1 = X(lo + h), y0 = Y(la + h), y1 = Y(la - h);
+      g.fillStyle = tcol(v[i * DEM.n + j] / 10, 0.58); g.fillRect(x0, y0, x1 - x0 + 0.6, y1 - y0 + 0.6);
+    }
   } else {
     const c = document.createElement('canvas'); c.width = DEM.n; c.height = DEM.n; const gg = c.getContext('2d');
     const img = gg.createImageData(DEM.n, DEM.n); const col = css('--basin').match(/[\d.]+/g).map(Number);
@@ -337,11 +349,11 @@ function draw() {
 }
 function legend() {
   const el = document.getElementById('legend');
-  if (state.layer === 't') {
+  if (state.layer !== 'b') {
     const grad = STOPS.filter(s => s[0] <= 9).map(s => `${tcol(s[0], 0.85)} ${((s[0] + 6) / 15 * 100).toFixed(0)}%`).join(',');
     el.innerHTML = `<div class="scale"><div class="bar" style="background:linear-gradient(90deg,${grad})"></div><div class="ticks"><span>−6°</span><span>−3°</span><span>0°</span><span>+3°</span><span>+6°</span><span>+9°</span></div></div>
-    <span class="key">Τετράγωνα: ελάχιστη θερμοκρασία ERA5-Land (9 χλμ.) τη νύχτα ${state.night === 19 ? 'προς 19/3' : 'προς 20/3'}</span>
-    <span class="key"><span class="dot" style="border:2px solid var(--ink);background:var(--accent-soft)"></span>Σταθμός Αστεροσκοπείου, ελάχιστο επεισοδίου</span>`;
+    <span class="key">${state.layer === 'c' ? 'CERRA (5,5 χλμ.)' : 'Τετράγωνα: ERA5-Land (9 χλμ.)'}, ελάχιστη θερμοκρασία τη νύχτα ${state.night === 19 ? 'προς 19/3' : 'προς 20/3'}${state.layer === 'c' && state.night === 19 ? ' (03:00–08:00)' : ''}</span>
+    <span class="key"><span class="dot" style="border:2px solid var(--ink);background:var(--accent-soft)"></span>Σταθμός Αστεροσκοπείου, ελάχιστο του Μαρτίου</span>`;
   } else {
     el.innerHTML = `<span class="key"><span class="dot" style="background:var(--basin)"></span>Κλειστή λεκάνη: βουνά σε 10+ από 16 κατευθύνσεις, μέσα σε 15 χλμ., και μικρή κλίση</span>
     <span class="key"><span class="dot" style="border:2px solid var(--ink);background:var(--accent-soft)"></span>Σταθμός Αστεροσκοπείου</span>`;
@@ -377,15 +389,15 @@ function sparkHist(arr) {
 function report() {
   const p = state.sel, tr = terrain(p.lat, p.lon), ci = cellIdx(p.lat, p.lon), c = D.cells[ci];
   const corr = c.h.map(v => v / 10 + 0.0065 * (c.elev - tr.e)), raw = c.h.map(v => v / 10);
-  const r19 = nightMin(raw, N19), r20 = nightMin(raw, N20), worst = r19.v <= r20.v ? r19 : r20;
-  const c19 = nightMin(corr, N19), c20 = nightMin(corr, N20), cw = c19.v <= c20.v ? c19 : c20;
+  const night = state.night, W = night === 19 ? N19 : N20, worst = nightMin(raw, W);
+  const cw = nightMin(corr, W), cer = cerraAt(p.lat, p.lon, night);
   const crop = CROPS[state.crop]; if (!crop.stages.find(s => s.id === state.stage)) state.stage = crop.stages[0].id;
   const st = crop.stages.find(s => s.id === state.stage);
-  const night = worst.k <= 16 ? 19 : 20, gdd = night === 19 ? c.g19 : c.g20;
-  const hrs = th => corr.filter(v => v <= th).length;
+  const gdd = night === 19 ? c.g19 : c.g20;
+  const hrs = th => corr.slice(W[0], W[1] + 1).filter(v => v <= th).length;
   let near = null, nd = 1e9; D.st.forEach(s => { const d = distKm(p, s); if (d < nd) { nd = d; near = s; } });
-  const useSt = nd <= 12;
-  const sMap = sevClass(cw.v, st), sRaw = sevClass(worst.v, st), sSt = useSt ? sevClass(near.t, st) : null;
+  const useSt = nd <= 12, sameN = useSt && near.day === night + '/3';
+  const sMap = sevClass(cw.v, st), sRaw = sevClass(worst.v, st), sSt = sameN ? sevClass(near.t, st) : null;
   let prio = 0, why = [];
   if (useSt && sSt === 2) { prio = 2; why.push(`ο σταθμός ${near.name} μέτρησε ${fmt(near.t)}°C`); }
   if (sMap === 2 || sRaw === 2) { prio = 2; why.push('ο χάρτης δείχνει θερμοκρασία κάτω από το όριο του 90%'); }
@@ -396,7 +408,7 @@ function report() {
   }
   if (!why.length) why.push('καμία πηγή δεν δείχνει θερμοκρασία κοντά στα όρια νέκρωσης');
   const PN = ['Χαμηλή προτεραιότητα για εκτιμητή', 'Μέτρια προτεραιότητα για εκτιμητή', 'Υψηλή προτεραιότητα για εκτιμητή'];
-  const disagree = useSt ? near.t - cw.v : null;
+  const disagree = sameN ? near.t - cw.v : null;
   const yrs = D.hist ? D.hist[ci] : null, nFrost = yrs ? yrs.filter(v => v <= -20).length : 0;
   const stageNote = gdd < 150
     ? `Βαθμοημέρες από 1/2 στο τετράγωνο: <b>${gdd}</b>. Πιθανότατα η άνθιση δεν είχε ολοκληρωθεί. Ο γεωπόνος δηλώνει το πραγματικό στάδιο· εδώ μετράμε με τα όρια της άνθισης, ως χειρότερη περίπτωση.`
@@ -409,9 +421,10 @@ function report() {
     <div><h3>Πόσο κρύο έκανε</h3><dl class="kv">
       <dt>Χάρτης ERA5-Land, τετράγωνο 9 χλμ. (μέσο υψόμετρο ${c.elev} μ.)</dt><dd>${fmt(worst.v)}°C<small>${hourLabel(worst.k)}</small></dd>
       <dt>Ίδιος χάρτης με διόρθωση υψομέτρου για τα ${Math.round(tr.e)} μ. του σημείου</dt><dd>${fmt(cw.v)}°C<small>${hourLabel(cw.k)}</small></dd>
-      <dt>${useSt ? `Σταθμός ${near.name}, ${nd < 0.5 ? 'στο σημείο' : nd.toFixed(1).replace('.', ',') + ' χλμ. μακριά'} (${near.elev} μ.)` : 'Κοντινότερος σταθμός'}</dt><dd>${useSt ? `${fmt(near.t)}°C<small>νύχτα προς ${near.day}</small>` : `<small>κανένας σε 12 χλμ.</small>`}</dd>
+      <dt>Χάρτης CERRA, 5,5 χλμ.</dt><dd>${fmt(cer)}°C<small>${night === 19 ? '03:00–08:00' : 'όλη η νύχτα'}</small></dd>
+      <dt>${useSt ? `Σταθμός ${near.name}, ${nd < 0.5 ? 'στο σημείο' : nd.toFixed(1).replace('.', ',') + ' χλμ. μακριά'} (${near.elev} μ.)` : 'Κοντινότερος σταθμός'}</dt><dd>${useSt ? `${fmt(near.t)}°C<small>${sameN ? 'νύχτα' : 'ελάχιστο σε άλλη νύχτα:'} προς ${near.day}</small>` : `<small>κανένας σε 12 χλμ.</small>`}</dd>
       <dt>Ώρες κάτω από −2 / −3 / −4°C (χάρτης με διόρθωση)</dt><dd>${hrs(-2)} / ${hrs(-3)} / ${hrs(-4)}</dd>
-    </dl>${useSt && Math.abs(disagree) >= 2 ? `<p class="note" style="margin-top:6px">Ο σταθμός και ο χάρτης διαφωνούν κατά ${fmt(Math.abs(disagree))}°C. Αυτή η διαφορά είναι που διορθώνει το μοντέλο της Φάσης Β.</p>` : ''}</div>
+    </dl>${sameN && Math.abs(disagree) >= 2 ? `<p class="note" style="margin-top:6px">Ο σταθμός και ο χάρτης διαφωνούν κατά ${fmt(Math.abs(disagree))}°C. Αυτή η διαφορά είναι που διορθώνει το μοντέλο της Φάσης Β.</p>` : ''}</div>
     <div class="row2">
       <label for="crop">Καλλιέργεια<select id="crop">${Object.entries(CROPS).map(([k, v]) => `<option value="${k}"${k === state.crop ? ' selected' : ''}>${v.name}</option>`).join('')}</select></label>
       <label for="stage">Στάδιο<select id="stage">${crop.stages.map(s => `<option value="${s.id}"${s.id === state.stage ? ' selected' : ''}>${s.name}</option>`).join('')}</select></label>
@@ -431,15 +444,21 @@ function report() {
   document.getElementById('stage').addEventListener('change', e => { state.stage = e.target.value; report(); });
 }
 function testTable() {
-  document.getElementById('testrows').innerHTML = D.test.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="n">${fmt(r[2])}</td><td class="n">${fmt(r[3])}</td><td class="n">${fmt(r[4])}</td></tr>`).join('');
+  document.getElementById('testrows').innerHTML = D.st.map(s => {
+    const n = parseInt(s.day, 10), w = n === 19 ? N19 : N20, c = D.cells[cellIdx(s.lat, s.lon)], era = nightMin(c.h, w).v / 10;
+    const where = /ταράτσα/.test(s.name) ? 'σε ταράτσα' : terrain(s.lat, s.lon).name;
+    return `<tr><td>${s.short} (${s.day})</td><td>${where}</td><td class="n">${fmt(s.t)}</td><td class="n">${fmt(era)}</td><td class="n">${fmt(era + 0.0065 * (c.elev - s.elev))}</td><td class="n">${fmt(cerraAt(s.lat, s.lon, n))}</td></tr>`;
+  }).join('');
 }
 
 /* ---------- events ---------- */
 function setPressed(a, b, on) { document.getElementById(a).setAttribute('aria-pressed', on ? 'true' : 'false'); document.getElementById(b).setAttribute('aria-pressed', on ? 'false' : 'true'); }
 document.getElementById('n19').onclick = () => { state.night = 19; setPressed('n19', 'n20', true); draw(); legend(); };
 document.getElementById('n20').onclick = () => { state.night = 20; setPressed('n19', 'n20', false); draw(); legend(); };
-document.getElementById('lt').onclick = () => { state.layer = 't'; setPressed('lt', 'lb', true); draw(); legend(); };
-document.getElementById('lb').onclick = () => { state.layer = 'b'; setPressed('lt', 'lb', false); draw(); legend(); };
+function setLayer(l) { state.layer = l; [['lt', 't'], ['lc', 'c'], ['lb', 'b']].forEach(([id, k]) => document.getElementById(id).setAttribute('aria-pressed', k === l ? 'true' : 'false')); draw(); legend(); }
+document.getElementById('lt').onclick = () => setLayer('t');
+document.getElementById('lc').onclick = () => setLayer('c');
+document.getElementById('lb').onclick = () => setLayer('b');
 cv.addEventListener('click', e => {
   const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
   state.sel = { lat: LAT1 - y / H * (LAT1 - LAT0), lon: LON0 + x / W * (LON1 - LON0) }; draw(); report();
