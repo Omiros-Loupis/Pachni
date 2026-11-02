@@ -1,0 +1,154 @@
+{
+ "lag_days": 0,
+ "όλες οι νύχτες": [
+  {
+   "n": 6244,
+   "bias": -0.71,
+   "rmse": 1.81
+  },
+  {
+   "n": 6244,
+   "bias": -0.99,
+   "rmse": 1.95
+  }
+ ],
+ "νύχτες με σταθμό ≤ 0": [
+  {
+   "n": 639,
+   "bias": -0.95,
+   "rmse": 1.77
+  },
+  {
+   "n": 639,
+   "bias": -1.22,
+   "rmse": 1.94
+  }
+ ],
+ "νύχτες με χάρτη ≤ 0": [
+  {
+   "n": 560,
+   "bias": -0.05,
+   "rmse": 1.49
+  }
+ ],
+ "πίνακας 0°C": [
+  {
+   "nights_station_below": 639,
+   "nights_map_below": 560,
+   "hit_rate": 0.72,
+   "false_alarm_ratio": 0.18
+  },
+  {
+   "nights_station_below": 639,
+   "nights_map_below": 481,
+   "hit_rate": 0.66,
+   "false_alarm_ratio": 0.12
+  }
+ ],
+ "πίνακας -2.2°C": [
+  {
+   "nights_station_below": 245,
+   "nights_map_below": 187,
+   "hit_rate": 0.62,
+   "false_alarm_ratio": 0.19
+  },
+  {
+   "nights_station_below": 245,
+   "nights_map_below": 157,
+   "hit_rate": 0.58,
+   "false_alarm_ratio": 0.09
+  }
+ ],
+ "ανά σταθμό": {
+  "Θεσσαλονίκη (GHCN)": [
+   {
+    "n": 1427,
+    "bias": -1.08,
+    "rmse": 2.29
+   },
+   {
+    "n": 1427,
+    "bias": -1.79,
+    "rmse": 2.7
+   },
+   {
+    "nights_station_below": 100,
+    "nights_map_below": 64,
+    "hit_rate": 0.5,
+    "false_alarm_ratio": 0.22
+   }
+  ],
+  "Θεσσαλονίκη, αερ. Μακεδονία (GHCN 16622)": [
+   {
+    "n": 581,
+    "bias": -0.59,
+    "rmse": 1.43
+   },
+   {
+    "n": 581,
+    "bias": -0.9,
+    "rmse": 1.58
+   },
+   {
+    "nights_station_below": 46,
+    "nights_map_below": 28,
+    "hit_rate": 0.54,
+    "false_alarm_ratio": 0.11
+   }
+  ],
+  "Κοζάνη (αεροδρόμιο, GHCN)": [
+   {
+    "n": 1385,
+    "bias": 0.3,
+    "rmse": 1.44
+   },
+   {
+    "n": 1385,
+    "bias": -0.02,
+    "rmse": 1.41
+   },
+   {
+    "nights_station_below": 269,
+    "nights_map_below": 306,
+    "hit_rate": 0.87,
+    "false_alarm_ratio": 0.24
+   }
+  ],
+  "Λάρισα (αεροδρόμιο, GHCN 16648)": [
+   {
+    "n": 1423,
+    "bias": -1.25,
+    "rmse": 1.95
+   },
+   {
+    "n": 1423,
+    "bias": -1.26,
+    "rmse": 1.95
+   },
+   {
+    "nights_station_below": 171,
+    "nights_map_below": 121,
+    "hit_rate": 0.65,
+    "false_alarm_ratio": 0.08
+   }
+  ],
+  "Νέα Αγχίαλος (GHCN)": [
+   {
+    "n": 1428,
+    "bias": -0.82,
+    "rmse": 1.56
+   },
+   {
+    "n": 1428,
+    "bias": -0.91,
+    "rmse": 1.61
+   },
+   {
+    "nights_station_below": 53,
+    "nights_map_below": 41,
+    "hit_rate": 0.75,
+    "false_alarm_ratio": 0.02
+   }
+  ]
+ }
+}

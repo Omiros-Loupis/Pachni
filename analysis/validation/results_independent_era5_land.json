@@ -1,0 +1,98 @@
+{
+ "χάρτης χωρίς διόρθωση": {
+  "όλες": {
+   "n": 6914,
+   "bias": -1.2,
+   "rmse": 2.67
+  },
+  "σταθμός≤0": {
+   "n": 767,
+   "bias": -2.31,
+   "rmse": 3.42
+  },
+  "0°C": {
+   "nights_station_below": 767,
+   "nights_map_below": 434,
+   "hit_rate": 0.47,
+   "false_alarm_ratio": 0.16
+  },
+  "−2,2°C": {
+   "nights_station_below": 299,
+   "nights_map_below": 145,
+   "hit_rate": 0.35,
+   "false_alarm_ratio": 0.28
+  }
+ },
+ "διόρθωση υψομέτρου": {
+  "όλες": {
+   "n": 6914,
+   "bias": -1.46,
+   "rmse": 2.72
+  },
+  "σταθμός≤0": {
+   "n": 767,
+   "bias": -2.35,
+   "rmse": 3.33
+  },
+  "0°C": {
+   "nights_station_below": 767,
+   "nights_map_below": 413,
+   "hit_rate": 0.47,
+   "false_alarm_ratio": 0.14
+  },
+  "−2,2°C": {
+   "nights_station_below": 299,
+   "nights_map_below": 132,
+   "hit_rate": 0.33,
+   "false_alarm_ratio": 0.24
+  }
+ },
+ "γραμμικό": {
+  "όλες": {
+   "n": 6914,
+   "bias": 1.98,
+   "rmse": 3.22
+  },
+  "σταθμός≤0": {
+   "n": 767,
+   "bias": -0.3,
+   "rmse": 2.49
+  },
+  "0°C": {
+   "nights_station_below": 767,
+   "nights_map_below": 1258,
+   "hit_rate": 0.74,
+   "false_alarm_ratio": 0.55
+  },
+  "−2,2°C": {
+   "nights_station_below": 299,
+   "nights_map_below": 499,
+   "hit_rate": 0.58,
+   "false_alarm_ratio": 0.65
+  }
+ },
+ "δέντρα": {
+  "όλες": {
+   "n": 6914,
+   "bias": 0.11,
+   "rmse": 2.59
+  },
+  "σταθμός≤0": {
+   "n": 767,
+   "bias": -0.91,
+   "rmse": 2.76
+  },
+  "0°C": {
+   "nights_station_below": 767,
+   "nights_map_below": 897,
+   "hit_rate": 0.64,
+   "false_alarm_ratio": 0.45
+  },
+  "−2,2°C": {
+   "nights_station_below": 299,
+   "nights_map_below": 368,
+   "hit_rate": 0.52,
+   "false_alarm_ratio": 0.58
+  }
+ }
+}

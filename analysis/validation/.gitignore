@@ -1,0 +1,5 @@
+raw/
+__pycache__/
+data/cell_nights_*.csv
+data/cells_*.csv
+data/ghcn_nights_*.csv
