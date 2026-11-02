@@ -28,7 +28,12 @@ test=[['Αριδαία','Κλειστή λεκάνη',-5.1,-2.8,-0.8],['Πλατ
 cerra={}
 for part in open(os.path.join(DATA,'raw_cerra.txt')).read().strip().split(';'):
     k,v=part.split(':'); cerra[k]=[int(x) for x in v.split(',')]
-D={'cerra':cerra,'dem':{'lat0':40.45,'lon0':21.85,'n':36,'step':0.02,'e':dem},'cells':cells,'hist':hist,'years':years,'st':st,'towns':towns,'test':test}
+cerra_cor={}
+for part in open(os.path.join(DATA,'raw_cerra_cor.txt')).read().strip().split(';'):
+    k,v=part.split(':'); cerra_cor[k]=[int(x) for x in v.split(',')]
+meta=json.load(open(os.path.join(DATA,'cerra_cor_meta.json')))
+cor={'q10':meta['q10'],'q90':meta['q90'],'mask':meta['mask'],'st':{n:{k:v[1] for k,v in d.items()} for n,d in meta['σταθμοί_demo_[CERRA, με διόρθωση]'].items()}}
+D={'cerra':cerra,'cerraCor':cerra_cor,'cor':cor,'dem':{'lat0':40.45,'lon0':21.85,'n':36,'step':0.02,'e':dem},'cells':cells,'hist':hist,'years':years,'st':st,'towns':towns,'test':test}
 html=open(os.path.join(ROOT,'src','template.html')).read().replace('__DATA__', json.dumps(D,ensure_ascii=False,separators=(',',':')))
 open(os.path.join(ROOT,'index.html'),'w').write(html)
 print('index.html:', len(html), 'bytes,', len(years), 'years of history')
