@@ -309,7 +309,7 @@ function draw() {
   const dpr = window.devicePixelRatio || 1;
   W = cv.clientWidth; H = Math.round(W * (LAT1 - LAT0) / ((LON1 - LON0) * COSLAT));
   cv.style.height = H + 'px'; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.lineJoin = 'round';
   g.imageSmoothingEnabled = true; g.drawImage(baseCanvas, 0, 0, W, H);
   const ink = css('--ink'), halo = css('--halo'), muted = css('--muted');
   const w = state.night === 19 ? N19 : N20;
